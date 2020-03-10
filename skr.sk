@@ -39,7 +39,7 @@ options:
 
 	MVersion: &cReload ➣ &7La version &c%{_v}%&7 du fichier est disponible !
 	MVersion2: &cReload ➣ &7Votre version actuelle est &c%{_u}%&7 !
-	MUpdate: &bReload ➣ &7Mise à jour de la version de &bskrelaod&7 en cours...
+	MUpdate: &bReload ➣ &7Mise à jour de la version de &bskreload&7 en cours...
 	MUpdated: &bReload ➣ &7Votre version de &bskreload&7 vient d'être mise à jour !
 
 	MPermission: &cReload ➣ &7Tu n'as pas la permission d'executer cette commande !
@@ -90,9 +90,10 @@ command /skreload [<text>]:
 	trigger:
 		arg 1 = "versionupdate":
 			broadcast "{@MUpdate}"
-			download file from "https://github.com/Frost145/Skript/blob/SkriptReload/skr.sk" to file "{@FileDirectory}"
+			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
 			execute sender command "sk reload skr"
 			broadcast "{@MUpdated}"
+			stop
 		arg-1 is not set:
 			send "{@MNoName}"
 			stop
