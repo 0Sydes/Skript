@@ -90,8 +90,8 @@ command /skreload [<text>]:
 	trigger:
 		arg 1 = "versionupdate":
 			broadcast "{@MUpdate}"
-			delete file "/plugins/Skript/skr.sk"
-			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "/plugins/Skript/skr.sk"
+			delete file "{@FileDirectory}/skr.sk"
+			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
 			reload skript "skr"
 			broadcast "{@MUpdated}"
 			stop
