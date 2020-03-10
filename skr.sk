@@ -24,7 +24,7 @@ options:
 	version: 1.0.0
 	update_check: true
 	update-cooldown: 60
-	# Attention ! L'auto-update peut détruire vos modifications !
+	# Attention ! L'auto-update peut détruire vos modifications ! (L'auto-update est remis à false lorsque le fichier est remplacé)
 	auto-update: false
 
 	permission: skreload
@@ -65,8 +65,8 @@ options:
 every {@update-cooldown} seconds:
 	set {_v} to line 2 from url "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/version"
 	set {_u} to "{@version}"
-	{_v} != "{@version}":
-		{@update_check} = true
+	{_v} != "{@version}"
+	{@update_check} = true:
 		loop all players:
 			loop-player is op
 			send "{@MVersion}" to loop-player
