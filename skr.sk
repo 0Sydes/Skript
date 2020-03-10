@@ -26,6 +26,7 @@ options:
 	update-cooldown: 60
 	# Attention ! L'auto-update peut détruire vos modifications ! (L'auto-update est remis à false lorsque le fichier est remplacé)
 	auto-update: false
+	update-save: true
 
 	permission: skreload
 	FileDirectory: /plugins/Skript/scripts
@@ -90,7 +91,11 @@ every {@update-cooldown} seconds:
 	{@auto-update} = true
 	broadcast "{@MUpdate}"
 	delete file "{@FileDirectory}/skr.sk"
+	{@update-save} = true:
+		set {_l} to line 28 in file "{@FileDirectory}/skr.sk"
 	download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
+	{@update-save} = true:
+		set line 28 in file "{@FileDirectory}/skr.sk" to {_l}
 	reload skript "skr"
 	broadcast "{@MUpdated}"
 
