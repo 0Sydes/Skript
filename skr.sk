@@ -21,7 +21,7 @@ options:
 	#								#
 	# # # # # # # # # # # # # # # # #
 
-	version: 1.0.0a
+	version: 1.0.0
 	update_check: true
 
 	permission: skreload
@@ -90,8 +90,9 @@ command /skreload [<text>]:
 	trigger:
 		arg 1 = "versionupdate":
 			broadcast "{@MUpdate}"
-			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
-			execute sender command "sk reload skr"
+			delete file "/plugins/Skript/skr.sk"
+			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "/plugins/Skript/skr.sk"
+			reload skript "skr"
 			broadcast "{@MUpdated}"
 			stop
 		arg-1 is not set:
