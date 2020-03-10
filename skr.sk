@@ -21,7 +21,7 @@ options:
 	#								#
 	# # # # # # # # # # # # # # # # #
 
-	version: 1.0.0b
+	version: 2.0
 	update_check: true
 	update-cooldown: 60
 	# Attention ! L'auto-update peut détruire vos modifications ! (L'auto-update est remis à false lorsque le fichier est remplacé)
@@ -62,6 +62,21 @@ options:
 	# Veuillez mettre "none", si vous souhaitez ne pas avoir de format.
 	TColor: 30/&4 10/&c 5/&6 2/&e 0/&a
 
+function TColor(n: number) :: text:
+	loop split "{@TColor}" at " ":
+		set {_i} to loop-value
+		replace "," with "." in {_i}
+		set {_t::*} to split "%{_i}%" at "/"
+		{_n} >= {_t::1} parsed as number*10^3:
+			set {_l::%{_t::1}%} to "%{_t::2}%"
+	set {_k} to 0
+	loop {_l::*}:
+		loop-index parsed as number >= {_k}
+		set {_k} to loop-index parsed as number
+	{_l::%{_k}%} is not set:
+		set {_l::%{_k}%} to "&a"
+	return "%{_l::%{_k}%}%"
+
 every {@update-cooldown} seconds:
 	set {_v} to line 24 from url "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk"
 	set {_u} to "{@version}"
@@ -79,31 +94,16 @@ every {@update-cooldown} seconds:
 	reload skript "skr"
 	broadcast "{@MUpdated}"
 
-function TColor(n: number) :: text:
-	loop split "{@TColor}" at " ":
-		set {_i} to loop-value
-		replace "," with "." in {_i}
-		set {_t::*} to split "%{_i}%" at "/"
-		{_n} >= {_t::1} parsed as number*10^3:
-			set {_l::%{_t::1}%} to "%{_t::2}%"
-	set {_k} to 0
-	loop {_l::*}:
-		loop-index parsed as number >= {_k}
-		set {_k} to loop-index parsed as number
-	{_l::%{_k}%} is not set:
-		set {_l::%{_k}%} to "&a"
-	return "%{_l::%{_k}%}%"
-
 command /skreload [<text>]:
 	aliases: skr
 	permission: {@permission}
 	permission message: {@MPermission}
 	trigger:
-		arg-1 is not set:
+		arg 1 is not set:
 			send "{@MNoName}"
 			stop
 		set {_l} to {skreload.last}
-		set {skreload.last} to arg-1
+		set {skreload.last} to arg 1
 		arg 1 = "last":
 			set {skreload.last} to {_l}
 		set {_list::*} to split "%{skreload.last}%" at "/"
