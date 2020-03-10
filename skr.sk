@@ -21,7 +21,7 @@ options:
 	#								#
 	# # # # # # # # # # # # # # # # #
 
-	version: 1.0.0
+	version: 1.0.0a
 	update_check: true
 
 	permission: skreload
@@ -39,6 +39,8 @@ options:
 
 	MVersion: &cReload ➣ &7La version &c%{_v}%&7 du fichier est disponible !
 	MVersion2: &cReload ➣ &7Votre version actuelle est &c%{_u}%&7 !
+	MUpdate: &bReload ➣ &7Mise à jour de la version de &bskrelaod&7 en cours...
+	MUpdated: &bReload ➣ &7Votre version de &bskreload&7 vient d'être mise à jour !
 
 	MPermission: &cReload ➣ &7Tu n'as pas la permission d'executer cette commande !
 	MNoName: &cReload ➣ &7Veuillez spécifier le nom d'un fichier à reload. &7(&c/skr [<Nom de fichier>]&7)
@@ -87,7 +89,10 @@ command /skreload [<text>]:
 	permission message: {@MPermission}
 	trigger:
 		arg 1 = "versionupdate":
-			download file from "" to file {@FileDirectory}
+			broadcast "{@MUpdate}"
+			download file from "https://github.com/Frost145/Skript/blob/SkriptReload/skr.sk" to file "{@FileDirectory}"
+			execute sender command "sk reload skr"
+			broadcast "{@MUpdated}"
 		arg-1 is not set:
 			send "{@MNoName}"
 			stop
