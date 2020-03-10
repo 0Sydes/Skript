@@ -63,7 +63,7 @@ options:
 	TColor: 30/&4 10/&c 5/&6 2/&e 0/&a
 
 every {@update-cooldown} seconds:
-	set {_v} to line 2 from url "https://github.com/Frost145/Skript/blob/SkriptReload/version"
+	set {_v} to line 2 from url "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/version"
 	set {_u} to "{@version}"
 	{_v} != "{@version}":
 		{@update_check} = true
@@ -98,13 +98,6 @@ command /skreload [<text>]:
 	permission: {@permission}
 	permission message: {@MPermission}
 	trigger:
-		arg 1 = "versionupdate":
-			broadcast "{@MUpdate}"
-			delete file "{@FileDirectory}/skr.sk"
-			download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
-			reload skript "skr"
-			broadcast "{@MUpdated}"
-			stop
 		arg-1 is not set:
 			send "{@MNoName}"
 			stop
