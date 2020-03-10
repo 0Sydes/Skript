@@ -23,6 +23,9 @@ options:
 
 	version: 1.0.0
 	update_check: true
+	update-cooldown: 60
+	# Attention ! L'auto-update peut détruire vos modifications !
+	auto-update: false
 
 	permission: skreload
 	FileDirectory: /plugins/Skript/scripts
@@ -39,8 +42,8 @@ options:
 
 	MVersion: &cReload ➣ &7La version &c%{_v}%&7 du fichier est disponible !
 	MVersion2: &cReload ➣ &7Votre version actuelle est &c%{_u}%&7 !
-	MUpdate: &bReload ➣ &7Mise à jour de la version de &bskreload&7 en cours...
-	MUpdated: &bReload ➣ &7Votre version de &bskreload&7 vient d'être mise à jour !
+	MUpdate: &bReload ➣ &7Mise à jour de skreload pour la version &b%{_v}%&7 en cours...
+	MUpdated: &bReload ➣ &7Votre version de skreload vient d'être mise à jour sur la version &a%{_v}%&7 !
 
 	MPermission: &cReload ➣ &7Tu n'as pas la permission d'executer cette commande !
 	MNoName: &cReload ➣ &7Veuillez spécifier le nom d'un fichier à reload. &7(&c/skr [<Nom de fichier>]&7)
@@ -59,14 +62,21 @@ options:
 	# Veuillez mettre "none", si vous souhaitez ne pas avoir de format.
 	TColor: 30/&4 10/&c 5/&6 2/&e 0/&a
 
-on join:
-	{@update_check} = true
-	player is op
+every {@update-cooldown} seconds:
 	set {_v} to line 2 from url "https://github.com/Frost145/Skript/blob/SkriptReload/version"
 	set {_u} to "{@version}"
-	{_v} != "{@version}"
-	send "{@MVersion}" to player
-	send "{@MVersion2}" to player
+	{_v} != "{@version}":
+		{@update_check} = true
+		loop all players:
+			loop-player is op
+			send "{@MVersion}" to loop-player
+			send "{@MVersion2}" to loop-player
+	{@auto-update} = true
+	broadcast "{@MUpdate}"
+	delete file "{@FileDirectory}/skr.sk"
+	download file from "https://raw.githubusercontent.com/Frost145/Skript/SkriptReload/skr.sk" to file "{@FileDirectory}/skr.sk"
+	reload skript "skr"
+	broadcast "{@MUpdated}"
 
 function TColor(n: number) :: text:
 	loop split "{@TColor}" at " ":
