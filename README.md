@@ -9,5 +9,7 @@ Veuillez ne pas vous approprier ce code comme étant le vôtre afin de respecter
 
 Requis:
 - Skript
-- SkUtilities			| https://docs.skunity.com/addon/skUtilities
-- SkQuery			| https://forums.skunity.com/resources/unofficial-skquery-fork-1-6-1-12.68/updates
+- SkUtilities	|	https://docs.skunity.com/addon/skUtilities
+- SkQuery	|	https://forums.skunity.com/resources/unofficial-skquery-fork-1-6-1-12.68/updates
+- Skript-Mirror 2.0.0-SNAPSHOT	|	https://skripttools.net/addons?q=skript-mirror
+
