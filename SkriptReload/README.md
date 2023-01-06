@@ -1,7 +1,7 @@
 				SKRIPT RELOAD
-Skript réalisé par Frost_145#8093 !
+Skript réalisé par Sydes#8093 !
 
-Tout droit est réservé, veuillez ne pas vous approprier ce code comme étant le vôtre afin de respecter mon travail, merci.
+Tout droit est réservé, veuillez ne pas vous approprier ce code comme étant le vôtre, merci.
 
 	Requis:
 	- Skript
