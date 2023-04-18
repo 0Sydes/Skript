@@ -1,0 +1,353 @@
+
+	# # # # # # # # # # # # # # # # #
+	#								#
+	#		SKRIPT RELOAD			#
+	#		By Frost_145#8093		#
+	#								#
+	# # # # # # # # # # # # # # # # #
+
+	# Skript réalisé par Frost_145#8093 !
+	# Veuillez ne pas vous approprier ce code comme étant le vôtre afin de respecter mon travail, merci.
+
+	#	Requis:
+	#	- Skript
+	#	- Skript-Mirror 2.0.0-SNAPSHOT	|	https://skripttools.net/addons?q=skript-mirror
+
+options:
+	# # # # # # # # # # # # # # # # #
+	#								#
+	#			CONFIGS				#
+	#								#
+	# # # # # # # # # # # # # # # # #
+
+	version: 3.0
+	update-check: true
+
+	permission: skreload
+	FileDirectory: plugins/Skript/scripts
+	# "permission": Seulement les joueurs ayant la permission
+	# "player": Tout les joueurs
+	MessageViewer: "permission"
+	MessageViewerAR: "permission"
+
+	autoreload-cooldown: 1
+
+	contain-option: "c:"
+
+	# # # # # # # # # # # # # # # # #
+	#								#
+	#			MESSAGES			#
+	#								#
+	# # # # # # # # # # # # # # # # #
+
+	# Attention ! Ne pas enlever les " ou les variables !
+
+	MVersion: &cReload ➣ &7La version &c%{_v::2}%&7 du fichier est disponible !
+	MVersion2: &cReload ➣ &7Votre version actuelle est &c%{_u}%&7 !
+
+	MPermission: &cReload ➣ &7Tu n'as pas la permission d'executer cette commande !
+	MAPermission: &cAReload ➣ &7Tu n'as pas la permission d'executer cette commande !
+	MNoName: &cReload ➣ &7Veuillez spécifier le nom d'un fichier à reload. &7(&c/skr [<Nom de fichier>]&7)
+
+	MNoFile: &cReload ➣ &7Aucun fichier au nom de <&c%{_m}%&7> n'a été trouvé.
+	MNoContain: &cReload ➣ &7Aucun fichier contenant <&c%{_m}%&7> n'a été trouvé.
+
+	MReload: &bReload ➣ &7Reload en cours du fichier <&b%{skreload.last}%&7>...
+	MEndReload: &aReload ➣ &7Reload du fichier &7<&a%{skreload.last}%&7> terminé. &7[Total: %{_c}%%{_total}/1000%%{_s}%&7]
+
+	MARStart: "&bReload ➣ &7AutoReload du fichier &7<&b%arg-1%&7> par %player%&7:"
+	MARAdd: &aReload ➣ &7AutoReload du fichier &7<&a%{_m}%&7> &aactivé&7. [Cible: &a%player%&7]
+	MARRemove: &cReload ➣ &7AutoReload du fichier &7<&c%{_m}%&7> &cdésactivé&7.
+	MARRemoveNoFile: &cReload ➣ &7AutoReload du fichier &7<&c%loop-value%&7> désactivé. &7[&cSupprimé&7 ou &crenommé&7]
+	MNoAR: &cReload ➣ &7Aucun fichier n'est reload automatiquement.
+	MARConsole: &cReload ➣ &7Le reload automatique n'est pas disponible pour la console !
+	MARList: "&bReload ➣ &7AutoReloads actives: %{_m}%"
+
+	TTimePlayer: "&f&nTemps:&7 (&b%player%&7)"
+	TPrefix: ➣
+	TTotal: "&f&nTemps Total:"
+	# Format des couleurs: (Temps en seconde)/(Code Couleur)
+	# Séparation des temps avec un espace, possibilité de mettre les temps en virgule/point.
+	# Veuillez mettre "none", si vous souhaitez ne pas avoir de format.
+	TColor: 60/&4&n 30/&4 10/&c 5/&6 2/&e 0/&a
+
+import:
+	java.io.File
+	java.lang.System
+	java.util.Arrays
+	java.io.BufferedReader
+	java.io.InputStreamReader
+	java.net.URL
+	org.bukkit.event.server.TabCompleteEvent
+
+on skript load:
+	send "" to console
+	send "&bReload ➣ &7Code réalisé par Frost_145##8093" to console
+	send "" to console
+	{@update-check} = true
+	set {_} to new URL("https://raw.githubusercontent.com/Frost145/Skript/master/SkriptReload/Version")
+	set {_t} to new BufferedReader(new InputStreamReader({_}.openStream()))
+	set {_v::*} to {_t}.readLine() and {_t}.readLine()
+	set {_u} to "{@version}"
+	{_v::2} != "{@version}"
+	send "{@MVersion}" to console
+	send "{@MVersion2}" to console
+
+on TabCompleteEvent:
+	event.getBuffer() contains "/skr " or "/skar "
+	"%event.getSender()%" parsed as player has permission "{@permission}"
+	set {_b::*} to split event.getBuffer() at " "
+	set {_l} to last element out of {_b::*}
+	set {_d} to new File("{@FileDirectory}")
+	loop ...{_d}.listFiles():
+		set {_t} to loop-value.getName()
+		{_t} contains ".sk"
+		first character of {_t} != "-"
+		replace ".sk" with "" in {_t}
+		{_l} = "":
+			add {_t} to {_l::*}
+		else:
+			set {_b} to length of {_l}
+			first {_b} characters of {_t} = {_l}
+			add {_t} to {_l::*}
+	event.setCompletions(Arrays.asList({_l::*}))
+
+function TColor(n: number) :: text:
+	loop split "{@TColor}" at " ":
+		set {_i} to loop-value
+		replace "," with "." in {_i}
+		set {_t::*} to split "%{_i}%" at "/"
+		{_n} >= {_t::1} parsed as number*10^3:
+			set {_l::%{_t::1}%} to "%{_t::2}%"
+	set {_k} to 0
+	loop {_l::*}:
+		loop-index parsed as number >= {_k}
+		set {_k} to loop-index parsed as number
+	{_l::%{_k}%} is not set:
+		set {_l::%{_k}%} to "&a"
+	return "%{_l::%{_k}%}%"
+
+function SendMessage(t: text, g: number):
+	{_g} = 0:
+		{@MessageViewer} = "permission":
+			loop all players:
+				loop-player has permission "{@permission}"
+				send "%{_t}%" to loop-player
+		else:
+			send "%{_t}%" to all players
+	{_g} = 1:
+		{@MessageViewerAR} = "permission":
+			loop all players:
+				loop-player has permission "{@permission}"
+				send "%{_t}%" to loop-player
+		else:
+			send "%{_t}%" to all players
+	send "%{_t}%" to console
+
+function skar(p: player, m: text):
+	set {AutoReload::%{_m}%} to {_m}
+	set {AutoReload::%{_m}%::Player} to {_p}
+	set {AutoReload::%{_m}%::LM} to new File("{@FileDirectory}/%{_m}%.sk").lastModified()
+
+function skardel(m: text):
+	delete {AutoReload::%{_m}%::LM}
+	delete {AutoReload::%{_m}%::Player}
+	delete {AutoReload::%{_m}%}
+
+every {@autoreload-cooldown} seconds:
+	loop {AutoReload::*}:
+		new File("{@FileDirectory}/%loop-value%.sk").exists() is true:
+			set {_l} to new File("{@FileDirectory}/%loop-value%.sk").lastModified()
+			{AutoReload::%loop-value%::LM} != {_l}
+			set {AutoReload::%loop-value%::LM} to {_l}
+			execute {AutoReload::%loop-value%::Player} command "skr %loop-value%"
+		else:
+			skardel(loop-value)
+			set {_f} to loop-value
+			SendMessage("{@MARRemoveNoFile}", 1)
+
+on quit:
+	loop {AutoReload::*}:
+		{AutoReload::%loop-index%::Player} = player
+		add loop-index to {_l::*}
+		skardel(loop-index)
+	{_l::*} is set
+	set {_f} to "%{_l::*}%"
+	replace ", " and " and " with "/" in {_f}
+	SendMessage("{@MARRemove}", 1)
+
+on skript unload:
+	loop {AutoReload::*}:
+		add loop-index to {_l::*}
+		skardel(loop-index)
+	{_l::*} is set
+	set {_f} to "%{_l::*}%"
+	replace ", " and " and " with "/" in {_f}
+	SendMessage("{@MARRemove}", 1)
+
+command /skautoreload [<text>]:
+	aliases: /skar
+	permission: {@permission}
+	permission message: {@MAPermission}
+	trigger:
+		arg-1 is not set:
+			loop {AutoReload::*}:
+				set {_l::%{AutoReload::%loop-index%::Player}%} to {AutoReload::%loop-index%::Player}
+				set {_l::%{AutoReload::%loop-index%::Player}%::%loop-value%} to loop-value
+			{_l::*} is set:
+				loop {_l::*}:
+					set {_m} to "%{_l::%loop-index%::*}%"
+					replace ", " and " and " with "/" in {_m}
+					set {_m} to "&7<<tooltip:&f&nExecuteur:&b %loop-index%>&b%{_m}%<reset>&7>"
+					add {_m} to {_m::*}
+				set {_m} to "%{_m::*}%"
+				replace ", " and " and " with "" in {_m}
+				send formatted {@MARList}
+			else:
+				send "{@MNoAR}"
+			stop
+		command sender is console:
+			send "{@MARConsole}" to console
+			stop
+		set {_l::*} to split arg 1 at "/"
+		SendMessage({@MARStart}, 1)
+		loop {_l::*}:
+			loop-value contains {@contain-option}
+			set {_c} to loop-value
+			delete {_y}
+			replace {@contain-option} with "" in {_c}
+			set {_d} to new File("{@FileDirectory}")
+			loop ...{_d}.listFiles():
+				set {_f} to "%loop-value-2.getName()%"
+				{_f} contains ".sk"
+				replace ".sk" with "" in {_f}
+				{_f} contains {_c}
+				first character of {_f} != "-"
+				add {_f} to {_l::*}
+				set {_y} to 1
+			{_y} is not set:
+				add loop-value to {_n::*}
+			remove loop-value from {_l::*}
+		loop {_l::*}:
+			new File("{@FileDirectory}/%loop-value%.sk").exists() is true:
+				{AutoReload::*} contains loop-value
+				{AutoReload::%loop-value%::Player} = player
+				add loop-value to {_r::*}
+			else:
+				add loop-value to {_n::*}
+				remove loop-value from {_l::*}
+		{_n::*} is set:
+			loop {_n::*}:
+				set {_n} to 1
+				loop-value contains {@contain-option}
+				remove loop-value from {_n}
+				add loop-value to {_n2::*}
+				delete {_n}
+			{_n} is set:
+				set {_m} to "%{_n::*}%"
+				replace ", " and " and " with "/" in {_m}
+				SendMessage("{@MNoFile}", 1)
+			{_n2::*} is set:
+				set {_m} to "%{_n2::*}%"
+				replace ", " and " and " with "/" in {_m}
+				replace {@contain-option} with "" in {_m}
+				SendMessage("{@MNoContain}", 1)
+			"%{_l::*}%" = "<none>"
+			stop
+		{_r::*} is set:
+			set {_m} to "%{_r::*}%"
+			replace ", " and " and " with "/" in {_m}
+			SendMessage("{@MARRemove}", 1)
+			loop {_r::*}:
+				remove loop-value from {_l::*}
+				skardel(loop-value)
+			"%{_l::*}%" = "<none>"
+			stop
+		loop {_l::*}:
+			skar(player, loop-value)
+		set {_m} to "%{_l::*}%"
+		replace ", " and " and " with "/" in {_m}
+		SendMessage("{@MARAdd}", 1)
+
+command /skreload [<text>]:
+	aliases: skr
+	permission: {@permission}
+	permission message: {@MPermission}
+	trigger:
+		arg 1 is not set:
+			send "{@MNoName}"
+			stop
+		set {_l} to {skreload.last}
+		set {skreload.last} to arg 1
+		arg 1 = "last":
+			set {skreload.last} to {_l}
+		set {_list::*} to split "%{skreload.last}%" at "/"
+		SendMessage("{@MReload}", 0)
+		{skreload.last} != "all" or "scripts":
+			loop {_list::*}:
+				loop-value contains {@contain-option}
+				delete {_y}
+				set {_c} to loop-value
+				replace {@contain-option} with "" in {_c}
+				set {_d} to new File("{@FileDirectory}")
+				loop ...{_d}.listFiles():
+					set {_f} to "%loop-value-2.getName()%"
+					{_f} contains ".sk"
+					replace ".sk" with "" in {_f}
+					{_f} contains {_c}
+					first character of {_f} != "-"
+					add {_f} to {_list::*}
+					set {_y} to 1
+				{_y} is not set:
+					add loop-value to {_stop::*}
+				remove loop-value from {_list::*}
+			loop {_list::*}:
+				loop-value != "config" or "aliases"
+				add loop-value to {_stop::*}
+				new File("{@FileDirectory}/%loop-value%.sk").exists() is true
+				remove loop-value from {_stop::*}
+			{_stop::*} is set
+			loop {_stop::*}:
+				set {_n} to 1
+				loop-value contains {@contain-option}
+				add loop-value to {_stop2::*}
+				remove loop-value from {_stop::*}
+				delete {_n}
+			{_n} is set:
+				set {_m} to "%{_stop::*}%"
+				replace ", " and " and " with "/" in {_m}
+				SendMessage("{@MNoFile}", 0)
+			{_stop2::*} is set:
+				set {_m} to "%{_stop2::*}%"
+				replace ", " and " and " with "/" in {_m}
+				replace {@contain-option} with "" in {_m}
+				SendMessage("{@MNoContain}", 0)
+			loop {_stop::*}:
+				remove loop-value from {_list::*}
+			{_list::*} is not set
+			set {skreload.last} to {_l}
+			stop
+		set {_tip} to {@TTimePlayer}
+		{skreload.last} = "all" or "scripts":
+			set {_list::*} to arg-1
+		set {_s} to "s"
+		loop {_list::*}:
+			set {_t} to System.nanoTime()
+			execute sender command "/sk reload %loop-value%"
+			set {_t} to (System.nanoTime() - {_t})/10^6
+			set {_c} to TColor({_t})
+			add {_t} to {_total}
+			set {_tip} to "%{_tip}%%System.lineSeparator()%&7{@TPrefix} %loop-value%: %{_c}%%{_t}%ms &7(%{_c}%%{_t}/1000%%{_s}%&7)"
+		set {_m} to "%{_list::*}%"
+		replace ", " and " and " with "/" in {_m}
+		set {skreload.last} to {_m}
+		set {_t} to {@TTotal}
+		set {_c} to TColor({_total})
+		set {_tip} to "%{_tip}%%System.lineSeparator()%%System.lineSeparator()%%{_t}%%{_c}% %{_total}%ms &7(%{_c}%%{_total}/1000%%{_s}%&7)"
+		{@MessageViewer} = "permission":
+			loop all players:
+				loop-player has permission "{@permission}"
+				send formatted "<tooltip:%{_tip}%>{@MEndReload}" to loop-player
+		{@MessageViewer} != "permission":
+			send formatted "<tooltip:%{_tip}%>{@MEndReload}" to all players
+		send "{@MEndReload}" to console
